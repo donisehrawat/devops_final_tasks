@@ -1,0 +1,6 @@
+env               = "staging"
+instance_type     = "t2.small"
+db_name           = "myappdb"
+db_username       = "admin"
+db_password       = "stagingpass123"
+db_instance_class = "db.t3.small"

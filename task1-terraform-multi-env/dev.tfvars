@@ -1,0 +1,6 @@
+env               = "dev"
+instance_type     = "t2.micro"
+db_name           = "myappdb"
+db_username       = "admin"
+db_password       = "password123"
+db_instance_class = "db.t3.micro"

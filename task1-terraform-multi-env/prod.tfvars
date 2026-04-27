@@ -1,0 +1,6 @@
+env               = "prod"
+instance_type     = "t3.medium"
+db_name           = "myappdb"
+db_username       = "admin"
+db_password       = "prodpass456"
+db_instance_class = "db.t3.medium"
