@@ -1,100 +1,90 @@
 resource "aws_vpc" "main" {
-  cidr_block = var.vpc_cidr
-
+cidr_block = var.vpc_cidr
   tags = {
     Name = "${var.env}-vpc"
-  }
+}
 }
 
 resource "aws_subnet" "public1" {
-  vpc_id                  = aws_vpc.main.id
-  cidr_block              = var.public_subnet1_cidr
-  availability_zone       = var.az1
+  vpc_id = aws_vpc.main.id
+  cidr_block = var.public_subnet1_cidr
+    availability_zone = var.az1
   map_public_ip_on_launch = true
-
   tags = {
-    Name = "${var.env}-public-1"
+      Name = "${var.env}-public-1"
   }
 }
-
 resource "aws_subnet" "public2" {
-  vpc_id                  = aws_vpc.main.id
-  cidr_block              = var.public_subnet2_cidr
-  availability_zone       = var.az2
+  vpc_id = aws_vpc.main.id
+    cidr_block = var.public_subnet2_cidr
+  availability_zone = var.az2
   map_public_ip_on_launch = true
-
   tags = {
     Name = "${var.env}-public-2"
   }
 }
 
 resource "aws_subnet" "private1" {
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = var.private_subnet1_cidr
-  availability_zone = var.az1
-
+vpc_id = aws_vpc.main.id
+cidr_block = var.private_subnet1_cidr
+availability_zone = var.az1
   tags = {
     Name = "${var.env}-private-1"
-  }
+}
 }
 
 resource "aws_subnet" "private2" {
   vpc_id            = aws_vpc.main.id
-  cidr_block        = var.private_subnet2_cidr
-  availability_zone = var.az2
-
+  cidr_block = var.private_subnet2_cidr
+    availability_zone = var.az2
   tags = {
     Name = "${var.env}-private-2"
   }
 }
+
 
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
 }
 
 resource "aws_eip" "nat" {
-  domain = "vpc"
+domain = "vpc"
 }
-
 resource "aws_nat_gateway" "nat" {
-  allocation_id = aws_eip.nat.id
-  subnet_id     = aws_subnet.public1.id
+allocation_id = aws_eip.nat.id
+subnet_id = aws_subnet.public1.id
 }
 
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
-
   route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.igw.id
+cidr_block = "0.0.0.0/0"
+gateway_id = aws_internet_gateway.igw.id
   }
 }
 
 resource "aws_route_table" "private" {
-  vpc_id = aws_vpc.main.id
-
+vpc_id = aws_vpc.main.id
   route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat.id
+    cidr_block = "0.0.0.0/0"
+      nat_gateway_id = aws_nat_gateway.nat.id
   }
 }
 
 resource "aws_route_table_association" "public1" {
-  subnet_id      = aws_subnet.public1.id
-  route_table_id = aws_route_table.public.id
+subnet_id = aws_subnet.public1.id
+route_table_id = aws_route_table.public.id
 }
-
 resource "aws_route_table_association" "public2" {
-  subnet_id      = aws_subnet.public2.id
+  subnet_id = aws_subnet.public2.id
   route_table_id = aws_route_table.public.id
 }
 
 resource "aws_route_table_association" "private1" {
   subnet_id      = aws_subnet.private1.id
-  route_table_id = aws_route_table.private.id
+    route_table_id = aws_route_table.private.id
 }
-
 resource "aws_route_table_association" "private2" {
-  subnet_id      = aws_subnet.private2.id
-  route_table_id = aws_route_table.private.id
+subnet_id = aws_subnet.private2.id
+route_table_id = aws_route_table.private.id
 }
