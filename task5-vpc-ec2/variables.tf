@@ -1,5 +1,5 @@
 variable "region" {
-  default = "us-east-1"
+  default = "ap-south-1"
 }
 
 variable "vpc_cidr" {
@@ -15,13 +15,9 @@ variable "private_subnet_cidr" {
 }
 
 variable "ami_id" {
-  default = "ami-0c02fb55956c7d316"
+  default = "ami-0f58b397bc5c1f2e8"
 }
 
 variable "instance_type" {
   default = "t2.micro"
-}
-
-variable "key_name" {
-  default = "my-key"
 }

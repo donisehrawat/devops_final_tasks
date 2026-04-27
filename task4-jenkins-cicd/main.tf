@@ -1,7 +1,5 @@
 resource "aws_vpc" "main" {
-  cidr_block           = var.vpc_cidr
-  enable_dns_support   = true
-  enable_dns_hostnames = true
+  cidr_block = var.vpc_cidr
 
   tags = {
     Name = "jenkins-vpc"
@@ -31,10 +29,6 @@ resource "aws_subnet" "private_subnet" {
 
 resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.main.id
-
-  tags = {
-    Name = "jenkins-igw"
-  }
 }
 
 resource "aws_eip" "nat_eip" {
@@ -44,10 +38,6 @@ resource "aws_eip" "nat_eip" {
 resource "aws_nat_gateway" "nat_gw" {
   allocation_id = aws_eip.nat_eip.id
   subnet_id     = aws_subnet.public_subnet.id
-
-  tags = {
-    Name = "jenkins-nat"
-  }
 }
 
 resource "aws_route_table" "public" {
@@ -57,10 +47,6 @@ resource "aws_route_table" "public" {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.gw.id
   }
-
-  tags = {
-    Name = "public-rt"
-  }
 }
 
 resource "aws_route_table" "private" {
@@ -69,10 +55,6 @@ resource "aws_route_table" "private" {
   route {
     cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.nat_gw.id
-  }
-
-  tags = {
-    Name = "private-rt"
   }
 }
 

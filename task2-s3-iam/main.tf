@@ -3,17 +3,17 @@ locals {
     dev = {
       bucket_suffix = "dev-storage"
       versioning    = true
-      users         = ["dev-user1", "dev-user2"]
+      users         = ["saksham", "akshat"]
     }
     staging = {
       bucket_suffix = "staging-storage"
-      versioning    = true
-      users         = ["staging-user1"]
+      versioning    = false
+      users         = ["udhav"]
     }
     prod = {
       bucket_suffix = "prod-storage"
       versioning    = true
-      users         = ["prod-user1", "prod-user2"]
+      users         = ["shimon", "saksham"]
     }
   }
 
@@ -43,7 +43,6 @@ resource "aws_s3_bucket_lifecycle_configuration" "env_lifecycle" {
     content {
       id     = "move-to-glacier"
       status = "Enabled"
-
       transition {
         days          = 90
         storage_class = "GLACIER"
@@ -52,11 +51,10 @@ resource "aws_s3_bucket_lifecycle_configuration" "env_lifecycle" {
   }
 
   rule {
-    id     = "expire-old"
+    id     = "delete-old"
     status = "Enabled"
-
     expiration {
-      days = each.key == "dev" ? 30 : 365
+      days = 30
     }
   }
 }

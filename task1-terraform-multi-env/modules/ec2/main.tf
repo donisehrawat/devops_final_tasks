@@ -63,13 +63,10 @@ resource "aws_lb_listener" "http" {
 }
 
 resource "aws_launch_template" "lt" {
-  name_prefix   = "${var.env}-lt"
-  image_id      = var.ami_id
-  instance_type = var.instance_type
-
-  network_interfaces {
-    security_groups = [aws_security_group.ec2_sg.id]
-  }
+  name_prefix            = "${var.env}-lt"
+  image_id               = var.ami_id
+  instance_type          = var.instance_type
+  vpc_security_group_ids = [aws_security_group.ec2_sg.id]
 
   user_data = base64encode(<<EOF
 #!/bin/bash
@@ -83,9 +80,9 @@ EOF
 
 resource "aws_autoscaling_group" "asg" {
   count              = var.env == "prod" ? 1 : 0
-  desired_capacity   = var.min_size
-  min_size           = var.min_size
-  max_size           = var.max_size
+  desired_capacity   = 2
+  min_size           = 2
+  max_size           = 5
   target_group_arns  = [aws_lb_target_group.tg.arn]
   vpc_zone_identifier = [var.private_subnet1_id, var.private_subnet2_id]
 
@@ -109,10 +106,6 @@ yum install nginx -y
 systemctl start nginx
 systemctl enable nginx
 EOF
-
-  tags = {
-    Name = "${var.env}-instance"
-  }
 }
 
 resource "aws_lb_target_group_attachment" "dev" {
